@@ -1,15 +1,23 @@
-# 🚨 _One-Stop-Shop_ Klipper Configuration
+<p align="center">
+Please consider
+<a href="https://ko-fi.com/bassamanator" target="_blank">donating</a> to
+support my open source work ❤️
+</p>
 
-This branch contains the Klipper configuration and firmware for the **Sovol SV06** 3D printer.
+# One-Stop-Shop Klipper Configuration
 
-| Printer                                                         | Branch                                                                                    |
-| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| ${\normalsize{\textcolor{darkturquoise}{\texttt{Sovol SV06}}}}$ | ⚡ ${\small{\textcolor{darkturquoise}{\texttt{YOU ARE HERE}}}}$ ⚡                        |
-| Sovol SV06 Skr-Mini-E3-V3.0                                     | [skr-mini-e3-v3](https://github.com/bassamanator/Sovol-SV06-firmware/tree/skr-mini-e3-v3) |
-| Sovol SV06 Plus                                                 | [sv06-plus](https://github.com/bassamanator/Sovol-SV06-firmware/tree/sv06-plus)           |
-| All other printers                                              | [any-printer](https://github.com/bassamanator/Sovol-SV06-firmware/tree/any-printer)       |
+| Printer                                                       | Branch                                                                                    |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| ${\normalsize{\textcolor{darkturquoise}{\text{Sovol SV06}}}}$ | ⚡ ${\scriptsize{\textcolor{darkturquoise}{\text{YOU ARE HERE}}}}$ ⚡                     |
+| Sovol SV06 SKR-Mini-E3-V3.0                                   | [skr-mini-e3-v3](https://github.com/bassamanator/Sovol-SV06-firmware/tree/skr-mini-e3-v3) |
+| Sovol SV06 Fly-E3-Pro-V3                                      | [fly-e3-pro-v3](https://github.com/ElPainis/Fly-E3-Pro-v3) \*\*                           |
+| Sovol SV06 Plus                                               | [sv06-plus](https://github.com/bassamanator/Sovol-SV06-firmware/tree/sv06-plus)           |
+| All other printers                                            | [any-printer](https://github.com/bassamanator/Sovol-SV06-firmware/tree/any-printer)       |
 
-I am creating these files for my personal use and cannot be held responsible for what it might do to your printer. Use at your own risk.
+${\small{\textit{** Maintained by ElPainis}}}$
+
+> [!WARNING]
+> I am creating these files for my personal use and cannot be held responsible for what it might do to your printer. Use at your own risk.
 
 ## Outline
 
@@ -26,6 +34,7 @@ I am creating these files for my personal use and cannot be held responsible for
 - [Adjust Your Slicer](#adjust-your-slicer)
 - [Support Me](#support-me)
 - [Directory Structure](#directory-structure)
+- [Special Considerations](#special-considerations)
 - [FAQ](#faq)
 - [Useful Resources](#useful-resources)
 - [Sovol Official Links](#sovol-official-links)
@@ -39,7 +48,8 @@ I am creating these files for my personal use and cannot be held responsible for
 - Pre-configured configuration bundles based on the [Ellis SuperSlicer Print Profiles](https://github.com/AndrewEllis93/Ellis-SuperSlicer-Profiles):
   - SuperSlicer
   - PrusaSlicer
-  - Printer profiles: SV06/Plus; SV07/Plus
+  - 🚀 OrcaSlicer 🚀
+  - Printer profiles: `SV06/Plus`; `SV07/Plus`
 - Bed model and texture to use in SuperSlicer/PrusaSlicer.
 - Macros:
   - **Improved** mechanical gantry calibration/`G34` macro that provides the user audio feedback, and time to check the calibration.
@@ -48,7 +58,7 @@ I am creating these files for my personal use and cannot be held responsible for
   - Load/unload filament macros.
   - `PURGE_LINE` macro.
   - `TEST_SPEED` macro. Find instructions [here](#how-do-i-use-the-test_speed-macro).
-- Klipper Adaptive Meshing & Purging (KAMP) integrated. Read about it [here](#how-do-i-enable-kamp-klipper-adaptive-meshing--purging).
+- Klipper Adaptive Meshing & Purging (KAMP) integrated. Read about it [here](#what-do-i-need-to-know-about-kamp).
 
 [🔼 Back to top](#outline)
 
@@ -58,7 +68,7 @@ ${\normalsize{\textcolor{goldenrod}{\texttt{Star ⭐ this project.}}}}$
 
 Watch for [updates](https://github.com/bassamanator/Sovol-SV06-firmware/discussions/37).
 
-<img src="./images/githubstar.gif" width="500" alt='github star'/>
+<img src="./misc/images/githubstar.gif" width="500" alt='github star'/>
 
 [🔼 Back to top](#outline)
 
@@ -73,10 +83,8 @@ In many ways, this entire repository can be considered _my opinion_ on the `3D p
 ## Before You Begin
 
 - This entire page is a **9 minute read**. Save yourself _hours of troubleshooting_ and read this documentation fully.
-- ⚠️ Make sure your printer is in good physical condition, because print and travel speeds will be _a lot faster_. Beginners would be wise to run through [these steps](https://github.com/bassamanator/everything-sovol-sv06/blob/main/initialsteps.md).
-- ⚠️ [Disable](https://github.com/bassamanator/everything-sovol-sv06/blob/main/howto.md#disable-usb-cable-5v-pin) the USB cable's 5V pin.
 - Follow the steps in order. If an error was reported at a step, do no proceed to the next step.
-- It is assumed that you are connected to your host Raspberry Pi (or other host device) via SSH, and that your printer motherboard is connected to the host via a data USB cable. 💡 Most of the micro USB cables that you find at home are _unlikely_ to be data cables, and it is not possible to tell just by looking.
+- It is assumed that you are connected to your host Raspberry Pi (or other host device) via SSH, and that your printer motherboard is connected to the host via a _data_ USB cable.
 - It is also assumed that the username on the host device is `pi`. If that is not the case, edit `moonraker.conf` and `cfgs/misc-macros.cfg` to change any mentions of `/home/pi` to `/home/yourUserName`.
 - Klipper _must_ be installed on the host beforehand. Easiest is to use [MainsailOS](https://github.com/mainsail-crew/mainsail/releases/latest). [KIAUH](https://github.com/th33xitus/kiauh) is another option.
 - Klipper _must_ be up to date.
@@ -86,7 +94,16 @@ In many ways, this entire repository can be considered _my opinion_ on the `3D p
 - It is assumed that there is one instance of Klipper installed. If that is not the case, the steps in this guide will not work _perfectly_ for you.
 - Your question has probably been answered already, but if it hasn't, please post in the [Discussion](https://github.com/bassamanator/Sovol-SV06-firmware/discussions) section.
 - I would recommend searching for the word `NOTE` in this configuration. There are roughly half a dozen short points amongst the various files that you should be aware of.
-<!-- - Link to recommended parts. -->
+- Consider [these](https://github.com/bassamanator/everything-sovol-sv06/blob/main/parts/README.md#printed-upgrades) printable parts, and also see my [Printables](https://www.printables.com/@bassamanator) page.
+
+> [!TIP]
+> Most of the micro USB cables that you find at home are _unlikely_ to be data cables, and it is not possible to tell just by looking.
+
+> [!CAUTION]
+> Make sure your printer is in good physical condition, because print and travel speeds will be _a lot faster_. Beginners would be wise to run through [these steps](https://github.com/bassamanator/everything-sovol-sv06/blob/main/initialsteps.md).
+
+> [!CAUTION]
+> [Disable](https://github.com/bassamanator/everything-sovol-sv06/blob/main/howto.md#disable-usb-cable-5v-pin) the USB cable's 5V pin.
 
 [🔼 Back to top](#outline)
 
@@ -102,7 +119,9 @@ Please note:
 - The firmware file is located in the `misc` folder.
 - Flashing will only work if current firmware filename is _different from previous flashing procedure_. The `.bin` is also important.
 - You may find this [video](https://youtu.be/p6l253OJa34) useful.
-- ⚠️ Many users have reported having issues flashing Klipper using the Sovol microSD card.
+
+> [!WARNING]
+> Many users have reported having issues flashing Klipper using the Sovol microSD card.
 
 #### 1. Prepare the microSD Card for Flashing with These Parameters
 
@@ -120,7 +139,8 @@ Please note:
 5. Turn on the printer and wait a minute (usually takes 10 seconds).
 6. Turn off the printer and remove the microSD.
 
-⏲️ At this point, it's not possible to tell with certainty whether your flash was successful, continue on with the guide.
+> [!IMPORTANT]
+> ⏲️ At this point, it's not possible to tell with certainty whether your flash was successful, continue on with the guide.
 
 [🔼 Back to top](#outline)
 
@@ -130,11 +150,12 @@ Please note:
 
 💡 Make sure `git` is installed (`sudo apt update && sudo apt install git`).
 
-1. `cd ~/printer_data/config`
-2. Empty entire `~/printer_data/config` folder.
+1. `ssh` into the Klipper host.
+2. `cd ~/printer_data/config`
+3. Empty entire `~/printer_data/config` folder.
    - In linux, you can delete files via `rm fileName` and directories via `rmdir directoryName`.
    - In linux, you can list files and folders via `ls -lah`.
-3. `git clone -b master --single-branch https://github.com/bassamanator/Sovol-SV06-firmware.git .` ⚠️ Don't miss the period!
+4. `git clone -b master --single-branch https://github.com/bassamanator/Sovol-SV06-firmware.git .` ⚠️ Don't miss the period!
 
 #### Method 2: Download the ZIP
 
@@ -168,7 +189,7 @@ Please note:
    restart_method: command
    ```
 
-3. Do a `FIRMWARE_RESTART`.
+3. Do a `FIRMWARE_RESTART` in the Klipper console.
 
 If the Klipper flash that you did earlier was successful, and you've done everything else correctly, you should see no errors or warnings in the `Mainsail`/`Fluidd` dashboard. 🎉 **Your printer has been Klipperized!** 🎉
 
@@ -186,7 +207,8 @@ If the Klipper flash that you did earlier was successful, and you've done everyt
 
 💡 I recommend no filament be loaded for any of these steps.
 
-📝 You will be pasting/typing these commands into the `Mainsail`/`Fluidd` console.
+> [!NOTE]
+> You will be pasting/typing these commands into the `Mainsail`/`Fluidd` console.
 
 1. Check to see if `X` and `Y` max positions can be reached, and adjust `position_max`, if necessary. You might be able to go further, which is great, but I recommend leaving a 2mm gap for safety.
    1. `G28`
@@ -217,7 +239,8 @@ _But first_, adjust your slicer.
 
 ## Adjust Your Slicer
 
-📝 If you are using the slicer bundles found on this repo, you can skip this section.
+> [!NOTE]
+> If you are using the slicer bundles found on this repo, you can skip this section.
 
 ### Start G-Code
 
@@ -234,7 +257,10 @@ PRINT_END
 If you would like to print a purge line before your print starts, at the end of your start gcode, on a new line, add one of the following:
 
 - `PURGE_LINE`; prints a standard purge line.
-- `LINE_PURGE`; prints KAMP's purge line. ⚠️ Do not attempt to use without reading [this section](#how-do-i-enable-kamp-klipper-adaptive-meshing--purging).
+- `LINE_PURGE`; prints KAMP's purge line.
+
+> [!WARNING]
+> Do not attempt to use `LINE_PURGE` without reading [this section](#what-do-i-need-to-know-about-kamp).
 
 ```yaml
 # 📝 This is just an example Start G-Code
@@ -248,7 +274,7 @@ PURGE_LINE
 
 Please ⭐ star this repository!
 
-Support [open source](https://en.wikipedia.org/wiki/Open_source), and buy me a [<img src="./images/logo_white_stroke.png" height="20" alt='Ko-fi'/>](https://ko-fi.com/bassamanator).
+Support [open source](https://en.wikipedia.org/wiki/Open_source), and buy me a [<img src="./misc/images/logo_white_stroke.png" height="20" alt='Ko-fi'/>](https://ko-fi.com/bassamanator).
 
 [🔼 Back to top](#outline)
 
@@ -261,13 +287,13 @@ This repository contains many files and folders. Some are _necessary_ for this K
 <!-- tree -a -C -I '.directory' -L 1 -F -->
 
 ```sh
+/home/pi/printer_data/config
 ├── cfgs/ ✅
 ├── CODE_OF_CONDUCT.md 💠
 ├── CONTRIBUTING.md 💠
 ├── .git/ ✅❔
 ├── .github/ 💠
 ├── .gitignore ✅❔
-├── images/ 💠
 ├── LICENSE 💠
 ├── misc/ 💠
 ├── moonraker.conf ✅
@@ -277,6 +303,28 @@ This repository contains many files and folders. Some are _necessary_ for this K
 ├── SECURITY.md 💠
 └── .vscode/ 💠
 ```
+
+[🔼 Back to top](#outline)
+
+## Special Considerations
+
+### Sequential printing
+
+If enabled, cancelling, or resuming a print from pause, could lead to collisions with previously printed objects. In order to prevent collisions, in your slicer, ensure that objects are printed from the back of the build plate to the front.
+
+In PrusaSlicer, please see Printer Settings > Notes, for extruder clearances.
+
+### Renamed GCODE Commands
+
+#### BED_MESH_CALIBRATE
+
+Renamed to `_BED_MESH_CALIBRATE`.
+
+### Errors
+
+#### MCU 'mcu' shutdown: Timer too close
+
+This error often occurs when the `mcu` is unable to generate the required `microsteps`. Lower power Klipper hosts might be especially susceptible. Reducing `microsteps` to `64`, or even `32` can resolve the issue.
 
 [🔼 Back to top](#outline)
 
@@ -290,11 +338,20 @@ Edit the relevant file according to your needs.
 | ---------------------- | ------------------------ |
 | `cfgs/misc-macros.cfg` | `[gcode_macro _globals]` |
 
-| Variable                           | Disable       | Enable        | Notes                                                               |
-| ---------------------------------- | ------------- | ------------- | ------------------------------------------------------------------- |
-| `variable_beeping_enabled`         | `0`           | `1` (default) |
-| `variable_filament_sensor_enabled` | `0` (default) | `1`           |
-| `variable_kamp_enable`             | `0` (default) | `1`           | See [here](#how-do-i-enable-kamp-klipper-adaptive-meshing--purging) |
+| Variable                           | Disable       | Enable         | Notes                                          |
+| ---------------------------------- | ------------- | -------------- | ---------------------------------------------- |
+| `variable_beeping_enabled`         | `0`           | `1` (default)  |
+| `variable_filament_sensor_enabled` | `0` (default) | `1`            |
+| `variable_kamp_enable`             | `0` (default) | `1`            | See [here](#what-do-i-need-to-know-about-kamp) |
+| `variable_bed_temp_over`           | `0`           | `10` (default) | Speeds up print start                          |
+| `variable_bed_temp_not_exact`      | `0`           | `1` (default)  | Speeds up print start                          |
+
+### Any differences between this configuration and Sovol's Marlin firmware?
+
+| Property                  | Marlin | OSS Klipper Config |
+| ------------------------- | ------ | ------------------ |
+| `stepper_z` `run_current` | 0.800  | 0.900              |
+| `microsteps`              | 16     | 128                |
 
 ### How do I import a configuration bundle into SuperSlicer/PrusaSlicer?
 
@@ -317,6 +374,8 @@ The printer will beep upon:
 
 You can find information about the physical setup [here](https://github.com/bassamanator/everything-sovol-sv06#filament-sensor).
 
+You can test the sensor via `QUERY_FILAMENT_SENSOR SENSOR=filament_sensor`.
+
 ### My filament runout sensor works, but I just started a print without any filament loaded. What gives?
 
 A simple runout sensor can only detect a change in state. So, if you start a print without filament loaded, the printer will not know that there is no filament loaded. You should test your sensor by having filament loaded, starting a print, then cutting the filament. The expected behaviour is that the print will pause, and as long as you have beeping enabled, you will hear 3 annoying beeps.
@@ -338,7 +397,8 @@ _If_ you have a working filament sensor, the same behaviour as `M600`/colour cha
 
 ### How do I resume a print after a colour change or filament runout?
 
-⚠️ Do not disable the stepper motors during this process!
+> [!WARNING]
+> Do not disable the stepper motors during this process!
 
 The printhead is now parked front center waiting for you to insert filament. You will:
 
@@ -349,21 +409,28 @@ The printhead is now parked front center waiting for you to insert filament. You
    - OR, you can push some filament by hand _making sure to first disengage the extruder's spring loaded arm_.
 3. Hit resume in your Klipper dashboard.
 
-### How do I enable KAMP (Klipper Adaptive Meshing & Purging)?
+### What do I need to know about KAMP?
 
-⚠️ No KAMP functionality can be used on low-powered devices such as the Raspberry Pi Zero.
+> [!WARNING]
+> No KAMP functionality can be used on low-powered devices such as the Raspberry Pi Zero.
 
-⚠️ If KAMP is disabled, and there is no `default` mesh, `PRINT_START` will crash.
+> [!WARNING]
+> If KAMP is disabled, and there is no `default` mesh, `PRINT_START` will crash.
 
-📝 The [Label objects setting](https://docs.mainsail.xyz/overview/features/exclude-objects#enable-the-label-objects-setting-in-your-slicer) in your slicer must be enabled for KAMP to work.
+> [!IMPORTANT]
+> The [Label objects setting](https://docs.mainsail.xyz/overview/features/exclude-objects#enable-the-label-objects-setting-in-your-slicer) in your slicer must be enabled for KAMP to work.
 
-📝 `LINE_PURGE` is useable (on appropriate devices) even if KAMP is disabled.
+> [!NOTE]
+> `LINE_PURGE` is useable _on appropriate devices_ even if KAMP is disabled.
 
 This repo contains all the code from the KAMP repository, however, only the `adaptive meshing` and `LINE_PURGE` functionality of KAMP has been configured and tested for use. To enable other functionality, adjust `/cfgs/kamp/KAMP_Settings.cfg`.
 
+Read [KAMP official docs](https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging) to learn more.
+
 ### How do I use the `TEST_SPEED` macro?
 
-⚠️ This is for advanced users only, with well oiled machines. You can cause serious damage to your printer if you're not careful. ☠️ **You have been warned** ☠️.
+> [!WARNING]
+> This is for advanced users only, with well oiled machines. You can cause serious damage to your printer if you're not careful.
 
 Find full instructions [here](https://ellis3dp.com/Print-Tuning-Guide/articles/determining_max_speeds_accels.html).
 
